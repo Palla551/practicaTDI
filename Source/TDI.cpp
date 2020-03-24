@@ -31,7 +31,7 @@ int Get_Historigrama(unsigned int* historigrama, C_Image a) {
 
 	/*Calculo de valor umbral mediante varianza --> Prueba*/
 	for (int i = 0; i < GREY_SCALE; i++) sum += i*historigrama[i];
-
+	
 	return 0;
 }
 
