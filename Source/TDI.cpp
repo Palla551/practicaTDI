@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 	C_Image::IndexT row, col;
 	C_Image a;
 	unsigned int* historigrama = (unsigned int*)malloc(sizeof(unsigned int) * GREY_SCALE);
-
+	//Linea de prueba
 	a.ReadBMP("Dados.bmp");
 	a.Grey();
 	
