@@ -1,0 +1,44 @@
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+Press ENTER to continue.
+TDI E (C_Image_BMP,  170) BMP option erroneous or not implemented: TYPE : 20617
+TDI E (C_Image_BMP,  170) BMP option erroneous or not implemented: TYPE : 20617
+TDI E (C_Image_BMP,  182) BMP option erroneous or not implemented: NUM BITS PER PLANE : 24
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   29) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   30) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   30) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   32) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   30) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   30) Writing image
+TDI T (TDI,   25) Image to negative
+TDI T (TDI,   30) Writing image
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
+TDI T (TDI,   26) Image to negative
+TDI T (TDI,   31) Writing image
