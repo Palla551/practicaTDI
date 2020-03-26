@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>  
 #include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
 
 #include <math.h>
 #include <fcntl.h>
@@ -17,10 +20,12 @@
 int Test(int argc, char **argv);
 int GREY_SCALE = 256;
 
-/*Historigrama de Otsu, Binariazacion de imagen y calculo del valor umbral*/
+/*Historigrama futura implementacion del calculo de valor humbral optimo*/
 int Get_Historigrama(unsigned int* historigrama, C_Image a) {
 	C_Image::IndexT row, col;
 	int sum = 0;
+	float varianza = 0.0;
+	float dtipica = 0.0;
 
 	/*Definicion del historigrama*/
 	for (int i = 0; i < GREY_SCALE; i++) historigrama[i] = 0;
@@ -28,29 +33,47 @@ int Get_Historigrama(unsigned int* historigrama, C_Image a) {
 	for (row = a.FirstRow(); row <= a.LastRow(); row++)
 		for (col = a.FirstCol(); col <= a.LastCol(); col++)
 			historigrama[(int)a(row, col)]++;
-
-	/*Calculo de valor umbral mediante varianza --> Prueba*/
-	for (int i = 0; i < GREY_SCALE; i++) sum += i*historigrama[i];
 	
 	return 0;
+}
+
+/*Calculo de los puntos minimos de la imagen*/
+std::map<long, std::map<C_Image::IndexT, C_Image::IndexT>> Get_minimos(C_Image a) {
+	std::map<long, std::map<C_Image::IndexT, C_Image::IndexT>> map;
+	C_Image::IndexT row, col;
+
+	for (row = a.FirstRow(); row <= a.LastRow(); row++)
+		for (col = a.FirstCol(); col <= a.LastCol(); col++)
+			map[a(row, col)][row] = col;
+
+	return map;
+}
+
+
+
+C_Image Watersheed(C_Image a) {
+	return a;
 }
 
 int main(int argc, char **argv)
 {
 	C_Image::IndexT row, col;
 	C_Image a;
-	unsigned int* historigrama = (unsigned int*)malloc(sizeof(unsigned int) * GREY_SCALE);
-	//Linea de prueba
-	a.ReadBMP("Dados.bmp");
+	float umbral = 0;
+	auto minimo = 0;
+	auto aux = 0;
+
+	a.ReadBMP("MisEjemplos/Dados.bmp");
 	a.Grey();
-	
-	Get_Historigrama(historigrama, a);
+	minimo = Get_minimos(a).begin() -> first;
 
 	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++)
-			if (a(row, col)  < 255) a(row, col) = 0;
-			
-	a.WriteBMP("Dados_Negative.bmp");
+		for (col = a.FirstCol(); col <= a.LastCol(); col++) {
+			aux = a(row, col);
+			if (aux <= minimo) a(row, col) = 255;
+		}
+
+	a.WriteBMP("MisEjemplos/Dados_Negative.bmp");
 
 	return 0;
 }

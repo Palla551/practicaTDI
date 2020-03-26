@@ -42,3 +42,5 @@ TDI T (TDI,   26) Image to negative
 TDI T (TDI,   31) Writing image
 TDI T (TDI,   26) Image to negative
 TDI T (TDI,   31) Writing image
+TDI E (C_Image_BMP,  288) Could not open file : MisEjemplos/Dados_Negative.bmp
+TDI E (C_Image_BMP,  238) Matrix not suitable for BMP write
