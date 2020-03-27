@@ -19,6 +19,7 @@
 
 int Test(int argc, char **argv);
 int GREY_SCALE = 256;
+C_Matrix mat(0, 0, 0, 0, 0);
 typedef long IndexT;
 
 /*Historigrama futura implementacion del calculo de valor humbral optimo*/
@@ -50,28 +51,45 @@ std::map<long, std::map<IndexT,IndexT>> Get_Minimos(C_Image a) {
 	return map;
 }
 
-C_Matrix Flood(C_Image a, C_Matrix mat, IndexT x, IndexT y, float umbral) {
-	if (!mat.In(x, y)) return mat;
-	if (mat(x, y) > 0) return mat;
-	if (a(x, y) <= umbral) {
-		Flood(a, mat, x - 1, y - 1, umbral);
-		/*Flood(a, mat, x - 1, y, umbral + 1);
-		Flood(a, mat, x - 1, y + 1,umbral + 1);
-		Flood(a, mat, x, y - 1,umbral + 1);
-		Flood(a, mat, x, y + 1,umbral + 1);
-		Flood(a, mat, x + 1, y - 1,umbral + 1);
-		Flood(a, mat, x + 1, y,umbral + 1);
-		Flood(a, mat, x + 1, y + 1, umbral + 1);*/
-	}
-	mat(x, y) = 255;
-	return mat;
+void Flood(C_Image a, IndexT x, IndexT y, float umbral) {
+	IndexT row, col;
+
+	for (row = x; row <= a.LastRow()-1; row++)
+		for (col = y; col <= a.LastCol()-1; col++) {
+			if (!mat.In(row, col)) break;
+			if (mat(row, col) > 0) continue;
+
+			if (a(row - 1, col - 1) >= umbral) mat(row - 1, col - 1) = umbral;
+			else mat(row - 1, col - 1) = 255;
+
+			if (a(row - 1, col + 1) >= umbral) mat(row - 1, col + 1) = umbral;
+			else mat(row - 1, col + 1) = 255;
+
+			if (a(row, col - 1) >= umbral) mat(row, col - 1) = umbral;
+			else mat(row, col - 1) = 255;
+			
+			if (a(row, col + 1) >= umbral) mat(row, col + 1) = umbral;
+			else mat(row, col + 1) = 255;
+			
+			if (a(row + 1, col - 1) >= umbral) mat(row + 1, col - 1) = umbral;
+			else mat(row + 1, col - 1) = 255;
+
+			if (a(row - 1, col - 1) >= umbral) mat(row - 1, col - 1) = umbral;
+			else mat(row - 1, col - 1) = 255;
+			
+			if (a(row - 1, col) >= umbral) mat(row - 1, col) = umbral;
+			else mat(row - 1, col) = 255;
+			
+			if (a(row + 1, col + 1) >= umbral) mat(row + 1, col + 1) = umbral;
+			else mat(row + 1, col + 1) = 255;
+
+		}
 }
 
 int main(int argc, char **argv)
 {
 	IndexT row, col;
 	C_Image a;
-	C_Matrix mat(0,0,0,0,0);
 	std::map<long, std::map<IndexT, IndexT>> map;
 
 	auto aux = 0;
@@ -82,13 +100,12 @@ int main(int argc, char **argv)
 	map = Get_Minimos(a);
 	mat.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
-	Flood(a,
-		mat,
-		(map.begin()->second).begin()->first,
-		(map.begin()->second).begin()->second,
-		(map.begin()->first));
+	Flood(a,(map.begin()->second).begin()->first,
+		(map.begin()->second).begin()->second,(map.begin()->first));
 
-	a.WriteBMP("MisEjemplos/Dados_Negative1.bmp");
+	C_Image b(mat);
+
+	b.WriteBMP("MisEjemplos/Dados_Negative1.bmp");
 
 	return 0;
 }

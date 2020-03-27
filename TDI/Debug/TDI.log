@@ -1,10 +1,10 @@
 ﻿  TDI.cpp
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(48,9): warning C4244: 'argumento': conversión de 'C_Matrix::ElementT' a 'const long'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(89,15): warning C4244: 'argumento': conversión de '_Ty1' a 'float'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(49,9): warning C4244: 'argumento': conversión de 'C_Matrix::ElementT' a 'const long'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(104,53): warning C4244: 'argumento': conversión de '_Ty1' a 'float'; posible pérdida de datos
           with
           [
               _Ty1=const long
           ]
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(72,9): warning C4101: 'row': variable local sin referencia
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(72,14): warning C4101: 'col': variable local sin referencia
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(91,9): warning C4101: 'row': variable local sin referencia
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(91,14): warning C4101: 'col': variable local sin referencia
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
