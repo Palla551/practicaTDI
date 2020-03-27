@@ -19,10 +19,11 @@
 
 int Test(int argc, char **argv);
 int GREY_SCALE = 256;
+typedef long IndexT;
 
 /*Historigrama futura implementacion del calculo de valor humbral optimo*/
 int Get_Historigrama(unsigned int* historigrama, C_Image a) {
-	C_Image::IndexT row, col;
+	IndexT row, col;
 	int sum = 0;
 	float varianza = 0.0;
 	float dtipica = 0.0;
@@ -38,9 +39,9 @@ int Get_Historigrama(unsigned int* historigrama, C_Image a) {
 }
 
 /*Calculo de los puntos minimos de la imagen*/
-std::map<long, std::map<C_Image::IndexT, C_Image::IndexT>> Get_minimos(C_Image a) {
-	std::map<long, std::map<C_Image::IndexT, C_Image::IndexT>> map;
-	C_Image::IndexT row, col;
+std::map<long, std::map<IndexT,IndexT>> Get_Minimos(C_Image a) {
+	std::map<long, std::map<IndexT, IndexT>> map;
+	IndexT row, col;
 
 	for (row = a.FirstRow(); row <= a.LastRow(); row++)
 		for (col = a.FirstCol(); col <= a.LastCol(); col++)
@@ -49,31 +50,45 @@ std::map<long, std::map<C_Image::IndexT, C_Image::IndexT>> Get_minimos(C_Image a
 	return map;
 }
 
-
-
-C_Image Watersheed(C_Image a) {
-	return a;
+C_Matrix Flood(C_Image a, C_Matrix mat, IndexT x, IndexT y, float umbral) {
+	if (!mat.In(x, y)) return mat;
+	if (mat(x, y) > 0) return mat;
+	if (a(x, y) <= umbral) {
+		Flood(a, mat, x - 1, y - 1, umbral);
+		/*Flood(a, mat, x - 1, y, umbral + 1);
+		Flood(a, mat, x - 1, y + 1,umbral + 1);
+		Flood(a, mat, x, y - 1,umbral + 1);
+		Flood(a, mat, x, y + 1,umbral + 1);
+		Flood(a, mat, x + 1, y - 1,umbral + 1);
+		Flood(a, mat, x + 1, y,umbral + 1);
+		Flood(a, mat, x + 1, y + 1, umbral + 1);*/
+	}
+	mat(x, y) = 255;
+	return mat;
 }
 
 int main(int argc, char **argv)
 {
-	C_Image::IndexT row, col;
+	IndexT row, col;
 	C_Image a;
-	float umbral = 0;
-	auto minimo = 0;
+	C_Matrix mat(0,0,0,0,0);
+	std::map<long, std::map<IndexT, IndexT>> map;
+
 	auto aux = 0;
 
 	a.ReadBMP("MisEjemplos/Dados.bmp");
 	a.Grey();
-	minimo = Get_minimos(a).begin() -> first;
 
-	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++) {
-			aux = a(row, col);
-			if (aux <= minimo) a(row, col) = 255;
-		}
+	map = Get_Minimos(a);
+	mat.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
-	a.WriteBMP("MisEjemplos/Dados_Negative.bmp");
+	Flood(a,
+		mat,
+		(map.begin()->second).begin()->first,
+		(map.begin()->second).begin()->second,
+		(map.begin()->first));
+
+	a.WriteBMP("MisEjemplos/Dados_Negative1.bmp");
 
 	return 0;
 }
