@@ -53,36 +53,15 @@ std::map<long, std::map<IndexT,IndexT>> Get_Minimos(C_Image a) {
 
 void Flood(C_Image a, IndexT x, IndexT y, float umbral) {
 	IndexT row, col;
+	auto aux = 0;
 
-	for (row = x; row <= a.LastRow()-1; row++)
-		for (col = y; col <= a.LastCol()-1; col++) {
-			if (!mat.In(row, col)) break;
+	for (row = x; row <= a.LastRow(); row++)
+		for (col = y; col <= a.LastCol(); col++) {
 			if (mat(row, col) > 0) continue;
 
-			if (a(row - 1, col - 1) >= umbral) mat(row - 1, col - 1) = umbral;
-			else mat(row - 1, col - 1) = 255;
-
-			if (a(row - 1, col + 1) >= umbral) mat(row - 1, col + 1) = umbral;
-			else mat(row - 1, col + 1) = 255;
-
-			if (a(row, col - 1) >= umbral) mat(row, col - 1) = umbral;
-			else mat(row, col - 1) = 255;
-			
-			if (a(row, col + 1) >= umbral) mat(row, col + 1) = umbral;
-			else mat(row, col + 1) = 255;
-			
-			if (a(row + 1, col - 1) >= umbral) mat(row + 1, col - 1) = umbral;
-			else mat(row + 1, col - 1) = 255;
-
-			if (a(row - 1, col - 1) >= umbral) mat(row - 1, col - 1) = umbral;
-			else mat(row - 1, col - 1) = 255;
-			
-			if (a(row - 1, col) >= umbral) mat(row - 1, col) = umbral;
-			else mat(row - 1, col) = 255;
-			
-			if (a(row + 1, col + 1) >= umbral) mat(row + 1, col + 1) = umbral;
-			else mat(row + 1, col + 1) = 255;
-
+			aux = a(row, col);
+			if (aux >= umbral && aux < 255) mat(row, col) = umbral; //255 Cambia por la probavilidad de ser un pixer de fondo
+			else mat(row, col) = 0;
 		}
 }
 
