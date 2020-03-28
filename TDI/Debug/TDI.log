@@ -1,11 +1,15 @@
 ﻿  TDI.cpp
 C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(49,9): warning C4244: 'argumento': conversión de 'C_Matrix::ElementT' a 'const long'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(62,11): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(83,53): warning C4244: 'argumento': conversión de '_Ty1' a 'float'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(59,20): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(63,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(76,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(88,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(99,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(127,33): warning C4244: 'argumento': conversión de '_Ty1' a 'float'; posible pérdida de datos
           with
           [
               _Ty1=const long
           ]
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(70,9): warning C4101: 'row': variable local sin referencia
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(70,14): warning C4101: 'col': variable local sin referencia
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(112,9): warning C4101: 'row': variable local sin referencia
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(112,14): warning C4101: 'col': variable local sin referencia
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe

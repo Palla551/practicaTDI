@@ -51,18 +51,60 @@ std::map<long, std::map<IndexT,IndexT>> Get_Minimos(C_Image a) {
 	return map;
 }
 
-void Flood(C_Image a, IndexT x, IndexT y, float umbral) {
+void Flood(C_Image a, IndexT x, IndexT y, float vasija) {
 	IndexT row, col;
 	auto aux = 0;
+	auto limite = 100;
 
-	for (row = x; row <= a.LastRow(); row++)
-		for (col = y; col <= a.LastCol(); col++) {
-			if (mat(row, col) > 0) continue;
+	if (!mat(x, y) > 0) {
+		//SE
+		for (row = x; row <= a.LastRow() - 1; row++)
+			for (col = y; col <= a.LastCol() - 1; col++) {
+				aux = a(row - 1, col - 1);
+				
+				if (a(row, col) - aux > 30) {
+					mat(row, col) = 255;
+					break;
+				}
 
-			aux = a(row, col);
-			if (aux >= umbral && aux < 255) mat(row, col) = umbral; //255 Cambia por la probavilidad de ser un pixer de fondo
-			else mat(row, col) = 0;
-		}
+				if (a(row, col) - vasija <= limite) mat(row, col) = 0;
+			}
+
+		//SW
+		for (row = x; row <= a.LastRow() - 1; row++)
+			for (col = y; col >= a.FirstCol() + 1; col--) {
+				aux = a(row - 1, col + 1);
+				
+				if (a(row, col) - aux > 30) {
+					mat(row, col) = 255;
+					break;
+				}
+				if (a(row, col) - vasija <= limite) mat(row, col) = 0;
+			}
+
+		//NE
+		for (row = x; row >= a.FirstCol() + 1; row--)
+			for (col = y; col <= a.LastCol() - 1; col++) {
+				aux = a(row + 1, col - 1);
+				
+				if (a(row, col) - aux > 30) {
+					mat(row, col) = 255;
+					break;
+				}
+				if (a(row, col) - vasija <= limite) mat(row, col) = 0;
+			}
+		//NW
+		for (row = x; row >= a.FirstCol() + 1; row--)
+			for (col = y; col >= a.FirstCol() + 1; col--) {
+				aux = a(row + 1, col + 1);
+				
+				if (a(row, col) - aux > 30) {
+					mat(row, col) = 255;
+					break;
+				}
+				if (a(row, col) - vasija <= limite) mat(row, col) = 0;
+			}
+	}
 }
 
 int main(int argc, char **argv)
@@ -73,18 +115,22 @@ int main(int argc, char **argv)
 
 	auto aux = 0;
 
-	a.ReadBMP("MisEjemplos/Dados.bmp");
+	a.ReadBMP("MisEjemplos/Hercules.bmp");
 	a.Grey();
 
 	map = Get_Minimos(a);
 	mat.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
-	Flood(a,(map.begin()->second).begin()->first,
-		(map.begin()->second).begin()->second,(map.begin()->first));
+	for (auto x : map) {
+		if (x.first > 100) break;
+		for (auto y : x.second) {
+			Flood(a, y.first, y.second, x.first);
+		}
+	}
 
 	C_Image b(mat);
 
-	b.WriteBMP("MisEjemplos/Dados_Negative1.bmp");
+	b.WriteBMP("MisEjemplos/Hercules1.bmp");
 
 	return 0;
 }
