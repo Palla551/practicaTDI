@@ -1,15 +1,10 @@
 ﻿  TDI.cpp
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(49,9): warning C4244: 'argumento': conversión de 'C_Matrix::ElementT' a 'const long'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(59,20): warning C4804: '>': uso no seguro del tipo 'bool' en la operación
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(63,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(76,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(88,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(99,12): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(127,33): warning C4244: 'argumento': conversión de '_Ty1' a 'float'; posible pérdida de datos
-          with
-          [
-              _Ty1=const long
-          ]
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(112,9): warning C4101: 'row': variable local sin referencia
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(112,14): warning C4101: 'col': variable local sin referencia
+IMtdi_VS2019_Debug.lib(C_Arguments.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Arguments.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_File.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_File.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_General.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_General.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Image.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Image.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Matrix.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Matrix.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Memory.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Memory.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_String.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_String.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Trace.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Trace.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
