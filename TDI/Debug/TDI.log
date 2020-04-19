@@ -1,22 +1,5 @@
 ﻿  TDI.cpp
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(90,15): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(90,13): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(90,30): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(90,27): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(96,14): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(97,15): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(98,26): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(98,19): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(109,14): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(110,15): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(111,26): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(111,19): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(122,14): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(123,15): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(124,26): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(124,19): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(134,14): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(135,15): warning C4244: '=': conversión de 'double' a 'IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(136,26): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(136,19): warning C4244: 'argumento': conversión de 'double' a 'const C_Matrix::IndexT'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(72,71): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(73,79): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(74,12): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
