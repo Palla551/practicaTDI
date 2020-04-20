@@ -13,8 +13,10 @@
 
 int Test(int argc, char **argv);
 int GREY_SCALE = 256;
-C_Matrix mat(0, 0, 0, 0, 0);
+C_Image mat(0, 0, 0, 0, 0);
+C_Image img(0, 0, 0, 0, 0);
 C_Image a;
+C_Matrix a_sobel;
 typedef long IndexT;
 typedef double ElementT;
 
@@ -57,6 +59,26 @@ int Get_Limite() {
 	return medio;
 }
 
+void Sobel(int limite) {
+	IndexT row, col;
+	a_sobel = a;
+
+	auto aux = 0;
+	auto gx = 0;
+	auto gy = 0;
+	auto g = 0;
+
+	for (row = a.FirstRow()+1; row <= a.LastRow()-1; row++)
+		for (col = a.FirstCol()+1; col <= a.LastCol()-1; col++) {
+			gx = (a(row - 1, col + 1) + (2 * a(row, col + 1)) + (a(row, col))) - (a(row - 1, col - 1) + (2 * a(row, col - 1)) + (a(row + 1, col - 1)));
+			gy = (a(row + 1, col - 1) + (2 * a(row, col - 1)) + (a(row - 1, col + 1))) - (a(row - 1, col -1) + (2 * a(row - 1, col)) + (a(row - 1, col + 1)));
+			g = sqrt(pow(gx,2) + pow (gx, 2));
+			a_sobel(row, col) = (g < limite) ? 0 : ((g >= limite)? 255 : g);
+			//a_sobel(row, col) = g;
+		}
+
+}
+
 /*Calculo de los puntos minimos de la imagen*/
 map<ElementT, map<IndexT,IndexT>> Get_Minimos(C_Image a) {
 	map<ElementT, map<IndexT, IndexT>> map;
@@ -69,120 +91,104 @@ map<ElementT, map<IndexT,IndexT>> Get_Minimos(C_Image a) {
 	return map;
 }
 
-void Binarizacion() {
+void Flood(long x, long y) {
 	IndexT row, col;
-	auto aux = 0;
-	//Ajustar limite || REVISAR
-	aux = Get_Limite();
+	ElementT aux = 0;
+	auto r = (rand() % 200) + 10;
+	auto g = (rand() % 200) + 10;
+	auto b = (rand() % 200) + 10;
 
-	//Binarizacion de la imagen
-	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++)
-			if (a(row, col) > aux) a(row, col) = 255;
-			else a(row, col) = 0;
+	//SE
+	for (row = x; row <= a.LastRow() - 1; row++)
+		for (col = y; col <= a.LastCol() - 1; col++) {
+			if (a_sobel(row, col) == 255) break;
+			aux = a(row + 1, col + 1);
+			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
+				img(row, col) = img.palette(1, C_RED) = r;
+				img(row, col) = img.palette(1, C_GREEN) = g;
+				img(row, col) = img.palette(1, C_BLUE) = b;
 
-}
-
-/*Algoritmo de llenado, version lenta sin limites automaticos ni marcadores
-Posible mejora, introduccion de hilos para agilizar el calculo de forma paralela*/
-
-void FloodHilos(double x, double y, double limite, int numHilo, bool hilos = false) {
-	if (mat.In(x,y) && !(mat(x, y) > 0)) {
-		IndexT row, col;
-		ElementT aux = 0;
-
-		//SE
-		if(numHilo == 0 || !hilos)
-		for (row = x; row <= a.LastRow() - 1; row++)
-			for (col = y; col <= a.LastCol() - 1; col++) {
-				if (!mat.In(x - 1, y - 1)) break;
-
-				aux = a(row - 1, col - 1);
-				if (a(row, col) - aux > limite) {
-					mat(row, col) = 255;
-					break;
-				}
-			}
-
-		//SW
-		if (numHilo == 1 || !hilos)
-		for (row = x; row <= a.LastRow() - 1; row++)
-			for (col = y; col >= a.FirstCol() + 1; col--) {
-				if (!mat.In(x - 1, y + 1)) break;
-				
-				aux = a(row - 1, col + 1);
-				if (a(row, col) - aux > limite) {
-					mat(row, col) = 255;
-					break;
-				}
-			}
-
-		//NE
-		if (numHilo == 2 || !hilos)
-		for (row = x; row >= a.FirstRow() + 1; row--)
-			for (col = y; col <= a.LastCol() - 1; col++) {
-				if (!mat.In(x + 1, y - 1)) break;
-				
-				aux = a(row + 1, col - 1);
-				if (a(row, col) - aux > limite) {
-					mat(row, col) = 255;
-					break;
-				}
-			}
-		//NW
-		if (numHilo == 3 || !hilos)
-		for (row = x; row >= a.FirstRow() + 1; row--)
-			for (col = y; col >= a.FirstCol() + 1; col--) {
-				if (!mat.In(x + 1, y + 1)) break;
-				
-				aux = a(row + 1, col + 1);
-				if (a(row, col) - aux > limite) {
-					mat(row, col) = 255;
-					break;
-				}
-			}
-	}
-}
-
-void Flood(bool hilos) {
-	thread hilo0, hilo1, hilo2, hilo3;
-	map<ElementT, std::map<IndexT, IndexT>> map;
-
-	Binarizacion();
-	map = Get_Minimos(a);
-
-	//METODO DE LLENADO HILOS REVISAR WARNINGS DE CONVERSION DE TIPO
-	if (hilos)
-		for (auto x : map) {
-			for (auto y : x.second) {
-				hilo0 = thread(FloodHilos, y.first, y.second, 10, 0, true);
-				hilo1 = thread(FloodHilos, y.first, y.second, 10, 1, true);
-				hilo2 = thread(FloodHilos, y.first, y.second, 10, 2, true);
-				hilo3 = thread(FloodHilos, y.first, y.second, 10, 3, true);
-
-				hilo0.join();
-				hilo1.join();
-				hilo2.join();
-				hilo3.join();
+				mat(row, col) = 10;
 			}
 		}
 
-	else
-		for (auto x : map)
-			for (auto y : x.second)
-				FloodHilos(y.first, y.second, 10, -1);
+	//SW
+	for (row = x; row <= a.LastRow() - 1; row++)
+		for (col = y; col >= a.FirstCol() + 1; col--) {
+			if (a_sobel(row, col) == 255) break;
+			aux = a(row + 1, col - 1);
+			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
+				img(row, col) = img.palette(1, C_RED) = r;
+				img(row, col) = img.palette(1, C_GREEN) = g;
+				img(row, col) = img.palette(1, C_BLUE) = b;
+
+				mat(row, col) = 10;
+			}
+		}
+
+	//NE
+	for (row = x; row >= a.FirstRow() + 1; row--)
+		for (col = y; col <= a.LastCol() - 1; col++) {
+			if (a_sobel(row, col) == 255) break;
+			aux = a(row - 1, col + 1);
+			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
+				img(row, col) = img.palette(1, C_RED) = r;
+				img(row, col) = img.palette(1, C_GREEN) = g;
+				img(row, col) = img.palette(1, C_BLUE) = b;
+
+				mat(row, col) = 10;
+			}
+		}
+	//NW
+	for (row = x; row >= a.FirstRow() + 1; row--)
+		for (col = y; col >= a.FirstCol() + 1; col--) {
+			if (a_sobel(row, col) == 255) break;
+			aux = a(row - 1, col - 1);
+			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
+				img(row, col) = img.palette(1, C_RED) = r;
+				img(row, col) = img.palette(1, C_GREEN) = g;
+				img(row, col) = img.palette(1, C_BLUE) = b;
+
+				mat(row, col) = 10;
+			}
+		}
+
+}
+
+void WaterSheed() {
+	IndexT row, col;
+	thread hilo0, hilo1, hilo2, hilo3;
+	map<ElementT, std::map<IndexT, IndexT>> map;
+
+	Sobel(Get_Limite());
+
+	for (row = a.FirstRow(); row <= a.LastRow(); row++)
+		for (col = a.FirstCol(); col <= a.LastCol(); col++) {
+			if (a_sobel(row, col) < 240 && mat(row, col) == 0) {
+				Flood(row, col);
+			}
+		}
+
 }
 
 int main(int argc, char **argv)
 {
-	a.ReadBMP("MisEjemplos/Ajedrez_Gris.bmp");
+	C_Image paleta;
+
+	paleta.ReadBMP("MisEjemplos/Dados.bmp");
+	a.ReadBMP("MisEjemplos/Alumina.bmp");
+
 	mat.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
+	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
+	img.palette = paleta.palette;
+	
 	a.Grey();
 
-	Flood(false);
-	
-	C_Image b(mat);
-	b.WriteBMP("MisEjemplos/Ajedrez_Gris1.bmp");
+	WaterSheed();
+
+	//C_Image sob(a_sobel);
+	//sob.WriteBMP("MisEjemplos/Alumina_SOB2.bmp");
+	img.WriteBMP("MisEjemplos/Alumina_WAT.bmp");
 
 	return 0;
 }
