@@ -1,5 +1,5 @@
 ﻿  TDI.cpp
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(72,71): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(73,79): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
-C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(74,12): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(73,71): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(74,79): warning C4244: '=': conversión de 'C_Matrix::ElementT' a 'int'; posible pérdida de datos
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(75,12): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
