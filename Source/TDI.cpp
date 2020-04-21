@@ -13,7 +13,6 @@
 
 int Test(int argc, char **argv);
 int GREY_SCALE = 256;
-C_Image mat(0, 0, 0, 0, 0);
 C_Image img(0, 0, 0, 0, 0);
 C_Image a;
 C_Matrix a_sobel;
@@ -64,131 +63,123 @@ void Sobel(int limite) {
 	a_sobel = a;
 
 	auto aux = 0;
-	auto gx = 0;
-	auto gy = 0;
-	auto g = 0;
+	double gx = 0;
+	double gy = 0;
+	double g = 0;
 
 	for (row = a.FirstRow()+1; row <= a.LastRow()-1; row++)
 		for (col = a.FirstCol()+1; col <= a.LastCol()-1; col++) {
 			gx = (a(row - 1, col + 1) + (2 * a(row, col + 1)) + (a(row, col))) - (a(row - 1, col - 1) + (2 * a(row, col - 1)) + (a(row + 1, col - 1)));
 			gy = (a(row + 1, col - 1) + (2 * a(row, col - 1)) + (a(row - 1, col + 1))) - (a(row - 1, col -1) + (2 * a(row - 1, col)) + (a(row - 1, col + 1)));
 			g = sqrt(pow(gx,2) + pow (gx, 2));
-			a_sobel(row, col) = (g < limite) ? 0 : ((g >= limite)? 255 : g);
+			a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
 			//a_sobel(row, col) = g;
 		}
 
+	a.Free();
 }
 
-/*Calculo de los puntos minimos de la imagen*/
-map<ElementT, map<IndexT,IndexT>> Get_Minimos(C_Image a) {
-	map<ElementT, map<IndexT, IndexT>> map;
-	IndexT row, col;
-
-	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++)
-			map[a(row, col)][row] = col;
-
-	return map;
+void FloodVecinos(IndexT x, IndexT y, long vecino, long seeds, long color) {
+	if (img.In(x, y)) {
+		if (img(x, y) != color) vecino--;
+		if (img(x, y) == color)
+		{
+			img(x, y) = seeds;
+			FloodVecinos(x + 1, y, vecino, seeds, color);
+			FloodVecinos(x, y + 1, vecino, seeds, color);
+			FloodVecinos(x - 1, y, vecino, seeds, color);
+			FloodVecinos(x, y - 1, vecino, seeds, color);
+		}
+	}
 }
 
-void Flood(long x, long y) {
+void Seeds(long umbral, long vecino,long seeds, long color) {
 	IndexT row, col;
-	ElementT aux = 0;
-	auto r = (rand() % 200) + 10;
-	auto g = (rand() % 200) + 10;
-	auto b = (rand() % 200) + 10;
+	auto a_seeds = seeds;
+	for (row = img.FirstRow(); row <= img.LastRow(); row++)
+		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
+			if (a_sobel(row, col) < umbral) img(row, col) = color;
+		}
 
-	//SE
-	for (row = x; row <= a.LastRow() - 1; row++)
-		for (col = y; col <= a.LastCol() - 1; col++) {
-			if (a_sobel(row, col) == 255) break;
-			aux = a(row + 1, col + 1);
-			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
-				img(row, col) = img.palette(1, C_RED) = r;
-				img(row, col) = img.palette(1, C_GREEN) = g;
-				img(row, col) = img.palette(1, C_BLUE) = b;
-
-				mat(row, col) = 10;
+	for (row = img.FirstRow(); row <= img.LastRow(); row++)
+		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
+			if (img(row, col) == color) {
+				FloodVecinos(row, col, vecino, a_seeds, color);
+				a_seeds++;
+				if (a_seeds >= 255) a_seeds = seeds;
 			}
 		}
 
-	//SW
-	for (row = x; row <= a.LastRow() - 1; row++)
-		for (col = y; col >= a.FirstCol() + 1; col--) {
-			if (a_sobel(row, col) == 255) break;
-			aux = a(row + 1, col - 1);
-			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
-				img(row, col) = img.palette(1, C_RED) = r;
-				img(row, col) = img.palette(1, C_GREEN) = g;
-				img(row, col) = img.palette(1, C_BLUE) = b;
-
-				mat(row, col) = 10;
-			}
-		}
-
-	//NE
-	for (row = x; row >= a.FirstRow() + 1; row--)
-		for (col = y; col <= a.LastCol() - 1; col++) {
-			if (a_sobel(row, col) == 255) break;
-			aux = a(row - 1, col + 1);
-			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
-				img(row, col) = img.palette(1, C_RED) = r;
-				img(row, col) = img.palette(1, C_GREEN) = g;
-				img(row, col) = img.palette(1, C_BLUE) = b;
-
-				mat(row, col) = 10;
-			}
-		}
-	//NW
-	for (row = x; row >= a.FirstRow() + 1; row--)
-		for (col = y; col >= a.FirstCol() + 1; col--) {
-			if (a_sobel(row, col) == 255) break;
-			aux = a(row - 1, col - 1);
-			if (abs(a(row, col) - aux) < 10 && mat(row, col) == 0) {
-				img(row, col) = img.palette(1, C_RED) = r;
-				img(row, col) = img.palette(1, C_GREEN) = g;
-				img(row, col) = img.palette(1, C_BLUE) = b;
-
-				mat(row, col) = 10;
-			}
-		}
-
+	
 }
 
-void WaterSheed() {
+void WaterShed(long umbral, long vecino, long seeds = 10, long color = 255) {
 	IndexT row, col;
-	thread hilo0, hilo1, hilo2, hilo3;
-	map<ElementT, std::map<IndexT, IndexT>> map;
 
+	//Primera parte, generacion de semillas
 	Sobel(Get_Limite());
+	Seeds(umbral, vecino, seeds, color);
 
-	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++) {
-			if (a_sobel(row, col) < 240 && mat(row, col) == 0) {
-				Flood(row, col);
+	//Segunda parte, inundacion
+	auto limite = umbral;
+
+	while (limite > 0) {
+		for (row = img.FirstRow() + 1; row <= img.LastRow() - 1; row++)
+			for (col = img.FirstCol() + 1; col <= img.LastCol() - 1; col++) {
+				if (a_sobel(row, col) < limite) continue;
+
+				if (img(row + 1, col) > 0) {
+					img(row, col) = img(row + 1, col);
+					continue;
+				}
+				if (img(row, col + 1) > 0) {
+					img(row, col) = img(row, col + 1);
+					continue;
+				}
+				if (img(row + 1, col + 1) > 0) {
+					img(row, col) = img(row + 1, col + 1);
+					continue;
+				}
+				if (img(row - 1, col) > 0) {
+					img(row, col) = img(row - 1, col);
+					continue;
+				}
+				if (img(row, col - 1) > 0) {
+					img(row, col) = img(row, col - 1);
+					continue;
+				}
+				if (img(row - 1, col - 1) > 0) {
+					img(row, col) = img(row - 1, col - 1);
+				}
 			}
-		}
+		limite--;
+	}
 
+	//Tercera Parte, postprocesado
+/*
+	for (row = img.FirstRow(); row <= img.LastRow(); row++)
+		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
+			if (a_sobel(row, col) < umbral) img(row, col) = color;
+		}
+		*/
 }
 
 int main(int argc, char **argv)
 {
-	C_Image paleta;
+	a.ReadBMP("MisEjemplos/water_coins.bmp");
 
-	paleta.ReadBMP("MisEjemplos/Dados.bmp");
-	a.ReadBMP("MisEjemplos/Alumina.bmp");
-
-	mat.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
-	img.palette = paleta.palette;
-	
+
 	a.Grey();
+	a.MedianFilter(a, 3);
 
-	WaterSheed();
+	WaterShed(1, 4);
 
-	//C_Image sob(a_sobel);
-	//sob.WriteBMP("MisEjemplos/Alumina_SOB2.bmp");
-	img.WriteBMP("MisEjemplos/Alumina_WAT.bmp");
+	img.palette.Read("PaletaSurtida256.txt");
+
+	C_Image sob(a_sobel);
+	sob.WriteBMP("MisEjemplos/water_coinsSOB.bmp");
+	img.WriteBMP("MisEjemplos/water_coinsWAT.bmp");
 
 	return 0;
 }
