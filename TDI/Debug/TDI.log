@@ -1,2 +1,12 @@
 ﻿  TDI.cpp
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(176,9): warning C4101: 'row': variable local sin referencia
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(176,14): warning C4101: 'col': variable local sin referencia
+IMtdi_VS2019_Debug.lib(C_Arguments.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Arguments.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_File.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_File.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_General.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_General.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Image.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Image.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Matrix.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Matrix.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Memory.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Memory.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_String.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_String.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+IMtdi_VS2019_Debug.lib(C_Trace.obj) : warning LNK4099: no se encontr¾ PDB 'IMtdi.pdb' con 'IMtdi_VS2019_Debug.lib(C_Trace.obj)' o en 'C:\Users\juanj\source\repos\practicaTDI\Debug\IMtdi.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
