@@ -19,52 +19,13 @@ C_Matrix a_sobel;
 typedef long IndexT;
 typedef double ElementT;
 
-struct Point{
+struct Point {
 	IndexT x = -1;
 	IndexT y = -1;
 	double sob;
 };
 
-int Get_Limite() {
-	int histograma[256] = {};
-	IndexT row, col;
-
-	/*Definicion del historigrama*/
-	for (int i = 0; i < GREY_SCALE; i++) histograma[i] = 0;
-
-	for (row = a.FirstRow(); row <= a.LastRow(); row++)
-		for (col = a.FirstCol(); col <= a.LastCol(); col++)
-			histograma[(int)a(row, col)]++;
-
-	//Busqueda de punto de equilibrio de histograma
-	//Pendiente de implementacion algoritmo de OTSU, posible mejora
-	int medio = 128;
-	int pesoIz = histograma[0];
-	int pesoDe = histograma[255];
-	int ini = 0;
-	int fin = 255;
-
-	while (ini <= fin) {
-		if (pesoDe > pesoIz) {
-			pesoDe -= histograma[fin--];
-			if (((ini + fin) / 2) < medio) {
-				pesoDe += histograma[medio];
-				pesoIz -= histograma[medio--];
-			}
-		}
-		else if (pesoIz >= pesoDe) {
-			pesoIz -= histograma[ini++];
-			if (((ini + fin) / 2) >= medio) {
-				pesoIz += histograma[medio + 1];
-				pesoDe -= histograma[medio + 1];
-				medio++;
-			}
-		}
-	}
-	return medio;
-}
-
-void Sobel(int limite) {
+void Sobel() {
 	IndexT row, col;
 	a_sobel = a;
 
@@ -83,164 +44,170 @@ void Sobel(int limite) {
 		}
 
 	a.Free();
+
 }
 
-void FloodFillRecursivo(IndexT x, IndexT y, long vecino, long seeds, long color) {
-	if (img.In(x, y)) {
-		if (img(x, y) != color) vecino--;
-		if (img(x, y) == color)
-		{
-			img(x, y) = seeds;
-			FloodFillRecursivo(x + 1, y, vecino, seeds, color);
-			FloodFillRecursivo(x, y + 1, vecino, seeds, color);
-			FloodFillRecursivo(x - 1, y, vecino, seeds, color);
-			FloodFillRecursivo(x, y - 1, vecino, seeds, color);
-		}
-	}
-}
-
-void FloodFill(IndexT x, IndexT y, long vecino, long seeds, long color)
+int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 {
 	vector<Point> queue;
+	auto vecino = vecinos;
+	auto saliente = 0;
+	auto cont = 0;
 	auto p = Point();
 	auto check = Point();
 	p.x = x;
 	p.y = y;
 
 	queue.push_back(p);
+	img(x, y) = seeds;
 
 	while (!queue.empty())
 	{
 		Point filled = queue.back();
 		queue.pop_back();
+		cont++;
 
 		// Left
 		check.x = filled.x - 1;
 		check.y = filled.y;
-		if (img.In(check.x, check.y) && img(check.x, check.y) == color)
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
 		{
+		left:
 			img(check.x, check.y) = seeds;
 			queue.push_back(check);
+		}
+		else if (img.In(check.x, check.y) && vecino > 0) {
+			saliente ++;
+			goto left;
 		}
 
 		// Right
 		check.x = filled.x + 1;
 		check.y = filled.y;
-		if (img.In(check.x, check.y) && img(check.x, check.y) == color)
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
 		{
+		rigth:
 			img(check.x, check.y) = seeds;
 			queue.push_back(check);
+		}
+		else if (img.In(check.x, check.y) && vecino > 0) {
+			saliente++;
+			goto rigth;
 		}
 
 		// Top
 		check.x = filled.x;
 		check.y = filled.y + 1;
-		if (img.In(check.x, check.y) && img(check.x, check.y) == color)
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
 		{
+		top:
 			img(check.x, check.y) = seeds;
 			queue.push_back(check);
+		}
+		else if (img.In(check.x, check.y) && vecino > 0) {
+			saliente++;
+			goto top;
 		}
 
 		// Bot
 		check.x = filled.x;
 		check.y = filled.y - 1;
-		if (img.In(check.x, check.y) && img(check.x, check.y) == color)
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
 		{
+		bot:
 			img(check.x, check.y) = seeds;
 			queue.push_back(check);
 		}
+		else if (img.In(check.x, check.y) && vecino > 0) {
+			saliente++;
+			goto bot;
+		}
+
+		if (saliente > 0) {
+			vecino -= saliente;
+			saliente = 0;
+		}
 	}
+	return cont;
 }
 
-void Seeds(long umbral, long vecino,long seeds, long color) {
+void Seeds(long umbral, long vecinos, long seeds, long color) {
 	IndexT row, col;
 	auto a_seeds = seeds;
+
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
 			if (a_sobel(row, col) < umbral) img(row, col) = color;
 		}
 
+	int asdf = 0;
+
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
 			if (img(row, col) == color) {
-				FloodFill(row, col, vecino, a_seeds, color);
-				a_seeds++;
+				asdf = FloodFill(row, col, vecinos, a_seeds, color);
+				if (asdf > 250) a_seeds++;
+				else FloodFill(row, col, vecinos, 0, a_seeds);
+
 				if (a_seeds >= 255) a_seeds = seeds;
 			}
 		}
-
-	
+	img.WriteBMP("MisEjemplos/AluminaSEEDS.bmp");
+	C_Image prueba;
+	prueba.ReadBMP("MisEjemplos/AluminaSEEDS.bmp");
+	prueba.palette.Read("PaletaSurtida256.txt");
+	prueba.WriteBMP("MisEjemplos/AluminaSEEDS.bmp");
+	prueba.Free();
 }
 
-void WaterShed(long umbral, long vecino = 0, long seeds = 10, long color = 255) {
+void WaterShed(long umbral, long vecinos = 0, long seeds = 10, long color = 255) {
 	IndexT row, col;
 
 	//Primera parte, generacion de semillas
-	Sobel(Get_Limite());
-	Seeds(umbral, vecino, seeds, color);
+	Sobel();
+	Seeds(umbral, vecinos, seeds, color);
 
 	//Segunda parte, inundacion
-	//auto limite = umbral;
-	//auto aux = 0;
-	//Point pos = Point();
+	auto limite = umbral;
 
-	//while (limite > 0) {
-	//	for (row = img.FirstRow() + 1; row <= img.LastRow() - 1; row++)
-	//		for (col = img.FirstCol() + 1; col <= img.LastCol() - 1; col++) {
-	//			if (a_sobel(row, col) < limite) continue;
-
-	//			if (img(row + 1, col) > 0) {
-	//				img(row, col) = img(row + 1, col);
-	//				continue;
-	//			}
-	//			if (img(row, col + 1) > 0) {
-	//				img(row, col) = img(row, col + 1);
-	//				continue;
-	//			}				
-	//			if (img(row + 1, col + 1) > 0) {
-	//				img(row, col) = img(row + 1, col + 1);
-	//				continue;
-	//			}
-	//			if (img(row - 1, col) > 0) {
-	//				img(row, col) = img(row - 1, col);
-	//				continue;
-	//			}
-	//			if (img(row, col - 1) > 0) {
-	//				img(row, col) = img(row, col - 1);
-	//				continue;
-	//			}
-	//			if (img(row - 1, col - 1) > 0) {
-	//				img(row, col) = img(row - 1, col - 1);
-	//				continue;
-	//			}
-	//			if (img(row + 1, col - 1) > 0) {
-	//				img(row, col) = img(row - 1, col - 1);
-	//				continue;
-	//			}
-	//			if (img(row - 1, col + 1) > 0) {
-	//				img(row, col) = img(row, col + 1);
-	//			}
-	//		}
-	//	limite--;
-	//}
+	while (limite < 255) {
+		for (row = img.FirstRow() + 1; row <= img.LastRow() - 1; row++)
+			for (col = img.FirstCol() + 1; col <= img.LastCol() - 1; col++) {
+				if (img(row, col) > 0)
+					for (int i = -1; i <= 1; i++)
+						for (int j = -1; j <= 1; j++)
+							if (img(row + i, col + j) == 0 && a_sobel(row, col) <= limite)
+								img(row + i, col + j) = img(row,col);
+			}
+		limite++;
+	}
 }
 
 int main(int argc, char **argv)
 {
-	a.ReadBMP("MisEjemplos/Aguadulce_Gris.bmp");
+	C_Image read;
+	a.ReadBMP("MisEjemplos/Ajedrez_Gris.bmp");
+	read.ReadBMP("MisEjemplos/Ajedrez_Gris.bmp");
 
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
 	a.Grey();
-	a.MedianFilter(a, 3);
 
-	WaterShed(20);
+	//read.MedianFilter(a, 3);
+
+	C_Matrix matriz2(-1, 1, -1, 1);
+	matriz2.Gaussian((float)0.2);
+	matriz2.DivideEscalar(matriz2.Sum());
+	a.Convolution(read, matriz2);
+	read.Free();
+
+	WaterShed(10, 0);
 
 	img.palette.Read("PaletaSurtida256.txt");
 
 	C_Image sob(a_sobel);
-	sob.WriteBMP("MisEjemplos/water_coinsSOB.bmp");
-	img.WriteBMP("MisEjemplos/water_coinsWAT.bmp");
+	sob.WriteBMP("MisEjemplos/AluminaSOB.bmp");
+	img.WriteBMP("MisEjemplos/AluminaWAT.bmp");
 
 	return 0;
 }
