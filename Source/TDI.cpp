@@ -2,8 +2,6 @@
 #include <stdlib.h>  
 #include <iostream>
 #include <vector>
-#include <map>
-#include <thread>
 
 #include <math.h>
 
@@ -11,18 +9,18 @@
 #include <C_Matrix.hpp>
 #include <C_Image.hpp>
 
-int Test(int argc, char **argv);
-int GREY_SCALE = 256;
 C_Image img(0, 0, 0, 0, 0);
 C_Image a;
+C_Image read;
 C_Matrix a_sobel;
+
 typedef long IndexT;
 typedef double ElementT;
 
-struct Point {
+struct Point 
+{
 	IndexT x = -1;
 	IndexT y = -1;
-	double sob;
 };
 
 void Sobel() {
@@ -47,7 +45,7 @@ void Sobel() {
 
 }
 
-int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
+int FloodFill(IndexT x, IndexT y, long vecinos, long color_seeds, long previus_color)
 {
 	vector<Point> queue;
 	auto vecino = vecinos;
@@ -59,7 +57,7 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 	p.y = y;
 
 	queue.push_back(p);
-	img(x, y) = seeds;
+	img(x, y) = color_seeds;
 
 	while (!queue.empty())
 	{
@@ -70,10 +68,10 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 		// Left
 		check.x = filled.x - 1;
 		check.y = filled.y;
-		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color))
 		{
 		left:
-			img(check.x, check.y) = seeds;
+			img(check.x, check.y) = color_seeds;
 			queue.push_back(check);
 		}
 		else if (img.In(check.x, check.y) && vecino > 0) {
@@ -84,10 +82,10 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 		// Right
 		check.x = filled.x + 1;
 		check.y = filled.y;
-		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color))
 		{
 		rigth:
-			img(check.x, check.y) = seeds;
+			img(check.x, check.y) = color_seeds;
 			queue.push_back(check);
 		}
 		else if (img.In(check.x, check.y) && vecino > 0) {
@@ -98,10 +96,10 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 		// Top
 		check.x = filled.x;
 		check.y = filled.y + 1;
-		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color))
 		{
 		top:
-			img(check.x, check.y) = seeds;
+			img(check.x, check.y) = color_seeds;
 			queue.push_back(check);
 		}
 		else if (img.In(check.x, check.y) && vecino > 0) {
@@ -112,10 +110,10 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 		// Bot
 		check.x = filled.x;
 		check.y = filled.y - 1;
-		if (img.In(check.x, check.y) && (img(check.x, check.y) == color))
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color))
 		{
 		bot:
-			img(check.x, check.y) = seeds;
+			img(check.x, check.y) = color_seeds;
 			queue.push_back(check);
 		}
 		else if (img.In(check.x, check.y) && vecino > 0) {
@@ -131,46 +129,47 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long seeds, long color)
 	return cont;
 }
 
-void Seeds(long umbral, long vecinos, long seeds, long color) {
+void Seeds(long umbral, long vecinos, long size_seed, long color_seeds, long previus_color) {
 	IndexT row, col;
-	auto a_seeds = seeds;
+	auto a_seeds = color_seeds;
 
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
-			if (a_sobel(row, col) < umbral) img(row, col) = color;
+			if (a_sobel(row, col) < umbral) img(row, col) = previus_color;
 		}
 
 	int asdf = 0;
+	img.WriteBMP("MisEjemplos/SEEDS_BN.bmp");
 
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
-			if (img(row, col) == color) {
-				asdf = FloodFill(row, col, vecinos, a_seeds, color);
-				if (asdf > 250) a_seeds++;
+			if (img(row, col) == previus_color) {
+				asdf = FloodFill(row, col, vecinos, a_seeds, previus_color);
+				if (asdf > size_seed) a_seeds++;
 				else FloodFill(row, col, vecinos, 0, a_seeds);
 
-				if (a_seeds >= 255) a_seeds = seeds;
+				if (a_seeds >= 255) a_seeds = color_seeds;
 			}
 		}
-	img.WriteBMP("MisEjemplos/AluminaSEEDS.bmp");
+	img.WriteBMP("MisEjemplos/SEEDS_CL.bmp");
 	C_Image prueba;
-	prueba.ReadBMP("MisEjemplos/AluminaSEEDS.bmp");
+	prueba.ReadBMP("MisEjemplos/SEEDS_CL.bmp");
 	prueba.palette.Read("PaletaSurtida256.txt");
-	prueba.WriteBMP("MisEjemplos/AluminaSEEDS.bmp");
+	prueba.WriteBMP("MisEjemplos/SEEDS_CL.bmp");
 	prueba.Free();
 }
 
-void WaterShed(long umbral, long vecinos = 0, long seeds = 10, long color = 255) {
+void WaterShed(long umbral, long vecinos = 0, long size_seed = 0,long color_seeds = 10, long previus_color = 255) {
 	IndexT row, col;
 
 	//Primera parte, generacion de semillas
 	Sobel();
-	Seeds(umbral, vecinos, seeds, color);
+	Seeds(umbral, vecinos, size_seed, color_seeds, previus_color);
 
 	//Segunda parte, inundacion
 	auto limite = umbral;
 
-	while (limite < 255) {
+	while (limite < 256) {
 		for (row = img.FirstRow() + 1; row <= img.LastRow() - 1; row++)
 			for (col = img.FirstCol() + 1; col <= img.LastCol() - 1; col++) {
 				if (img(row, col) > 0)
@@ -183,31 +182,56 @@ void WaterShed(long umbral, long vecinos = 0, long seeds = 10, long color = 255)
 	}
 }
 
+void Resta() {
+	IndexT row, col;
+	int historigram[256];
+	auto max = 0;
+
+	for (int x = 0; x < 256; x++) historigram[x] = 0;
+
+	for (row = img.FirstRow(); row <= img.LastRow(); row++)
+		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
+			historigram[(int)img(row, col)]++;
+		}
+
+	for (int x = 0; x < 256; x++)
+		if (max < historigram[x]) max = historigram[x];
+
+	for (row = img.FirstRow(); row <= img.LastRow(); row++)
+		for (col = img.FirstCol(); col <= img.LastCol(); col++)
+			if (img(row, col) == max) read(row, col) = a(row, col);
+
+}
+
+
 int main(int argc, char **argv)
 {
-	C_Image read;
-	a.ReadBMP("MisEjemplos/Ajedrez_Gris.bmp");
-	read.ReadBMP("MisEjemplos/Ajedrez_Gris.bmp");
+	a.ReadBMP("MisEjemplos/DSCF2953.bmp");
+	read.ReadBMP("MisEjemplos/DSCF2953.bmp");
 
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
 	a.Grey();
 
+	//Aplicacion de filtros
 	//read.MedianFilter(a, 3);
-
 	C_Matrix matriz2(-1, 1, -1, 1);
-	matriz2.Gaussian((float)0.2);
+	matriz2.Gaussian((float)0.4);
 	matriz2.DivideEscalar(matriz2.Sum());
 	a.Convolution(read, matriz2);
-	read.Free();
 
-	WaterShed(10, 0);
+	//Aplicacion de algoritmo WaterShed
+	WaterShed(15, 0, 350);
 
+	//Aplicacion de emborronado
+	Resta();
+
+	//Impresion de las imagenes
 	img.palette.Read("PaletaSurtida256.txt");
 
 	C_Image sob(a_sobel);
-	sob.WriteBMP("MisEjemplos/AluminaSOB.bmp");
-	img.WriteBMP("MisEjemplos/AluminaWAT.bmp");
+	sob.WriteBMP("MisEjemplos/SOB.bmp");
+	img.WriteBMP("MisEjemplos/WAT.bmp");
 
 	return 0;
 }
