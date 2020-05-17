@@ -27,21 +27,36 @@ void Sobel() {
 	IndexT row, col;
 	a_sobel = a;
 
-	auto aux = 0;
+	int mx[3][3] = { {-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+	int my[3][3] = { {-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+	
 	double gx = 0;
 	double gy = 0;
 	double g = 0;
 
 	for (row = a.FirstRow()+1; row <= a.LastRow()-1; row++)
 		for (col = a.FirstCol()+1; col <= a.LastCol()-1; col++) {
-			gx = (a(row - 1, col + 1) + (2 * a(row, col + 1)) + (a(row, col))) - (a(row - 1, col - 1) + (2 * a(row, col - 1)) + (a(row + 1, col - 1)));
-			gy = (a(row + 1, col - 1) + (2 * a(row, col - 1)) + (a(row - 1, col + 1))) - (a(row - 1, col -1) + (2 * a(row - 1, col)) + (a(row - 1, col + 1)));
+			gx = (a(row - 1, col + 1) + (2 * a(row, col + 1)) + (a(row, col + 1))) + (-a(row - 1, col - 1) + (-2 * a(row, col - 1)) + (-a(row + 1, col - 1)));
+			gy = (a(row + 1, col - 1) + (2 * a(row + 1, col)) + (a(row + 1, col + 1))) + (-a(row - 1, col -1) + (-2 * a(row - 1, col)) + (-a(row - 1, col + 1)));
 			g = sqrt(pow(gx,2) + pow (gx, 2));
 			a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
 			//a_sobel(row, col) = g;
 		}
 
-	a.Free();
+	//for (row = a.FirstRow() + 1; row <= a.LastRow() - 1; row++)
+	//	for (col = a.FirstCol() + 1; col <= a.LastCol() - 1; col++) {
+	//		for(int x = -1; x < 2; x++)
+	//			for (int y = -1; y < 2; y++) {
+	//				gx += mx[x + 1][y + 1] * a(row + x, col + y);
+	//				gy += my[x + 1][y + 1] * a(row + x, col + y);
+	//			}
+	//		g = sqrt(pow(gx, 2) + pow(gx, 2));
+	//		a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
+	//		gx = 0;
+	//		gy = 0;
+	//	}
+
+	//a.Free();
 
 }
 
@@ -186,6 +201,7 @@ void Resta() {
 	IndexT row, col;
 	int historigram[256];
 	auto max = 0;
+	auto aux = 0;
 
 	for (int x = 0; x < 256; x++) historigram[x] = 0;
 
@@ -195,33 +211,36 @@ void Resta() {
 		}
 
 	for (int x = 0; x < 256; x++)
-		if (max < historigram[x]) max = historigram[x];
+		if (max < historigram[x]) {
+			aux = x;
+			max = historigram[x];
+		}
 
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++)
-			if (img(row, col) == max) read(row, col) = a(row, col);
+			if (img(row, col) == aux) read(row, col) = a(row,col);
 
 }
 
 
 int main(int argc, char **argv)
 {
-	a.ReadBMP("MisEjemplos/DSCF2953.bmp");
-	read.ReadBMP("MisEjemplos/DSCF2953.bmp");
+	a.ReadBMP("MisEjemplos/Valve.bmp");
+	read.ReadBMP("MisEjemplos/Valve.bmp");
 
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
 	a.Grey();
 
 	//Aplicacion de filtros
-	//read.MedianFilter(a, 3);
-	C_Matrix matriz2(-1, 1, -1, 1);
-	matriz2.Gaussian((float)0.4);
-	matriz2.DivideEscalar(matriz2.Sum());
-	a.Convolution(read, matriz2);
+	a.MedianFilter(a, 3);
+	//C_Matrix matriz2(-1, 1, -1, 1);
+	//matriz2.Gaussian((float)0.4);
+	//matriz2.DivideEscalar(matriz2.Sum());
+	//a.Convolution(read, matriz2);
 
 	//Aplicacion de algoritmo WaterShed
-	WaterShed(15, 0, 350);
+	WaterShed(25, 0, 100);
 
 	//Aplicacion de emborronado
 	Resta();
@@ -232,6 +251,6 @@ int main(int argc, char **argv)
 	C_Image sob(a_sobel);
 	sob.WriteBMP("MisEjemplos/SOB.bmp");
 	img.WriteBMP("MisEjemplos/WAT.bmp");
-
+	read.WriteBMP("MisEjemplos/SALIDA.bmp");
 	return 0;
 }
