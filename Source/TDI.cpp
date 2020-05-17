@@ -38,7 +38,7 @@ void Sobel() {
 		for (col = a.FirstCol()+1; col <= a.LastCol()-1; col++) {
 			gx = (a(row - 1, col + 1) + (2 * a(row, col + 1)) + (a(row, col + 1))) + (-a(row - 1, col - 1) + (-2 * a(row, col - 1)) + (-a(row + 1, col - 1)));
 			gy = (a(row + 1, col - 1) + (2 * a(row + 1, col)) + (a(row + 1, col + 1))) + (-a(row - 1, col -1) + (-2 * a(row - 1, col)) + (-a(row - 1, col + 1)));
-			g = sqrt(pow(gx,2) + pow (gx, 2));
+			g = sqrt(pow(gx,2) + pow (gy, 2));
 			a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
 			//a_sobel(row, col) = g;
 		}
@@ -225,8 +225,8 @@ void Resta() {
 
 int main(int argc, char **argv)
 {
-	a.ReadBMP("MisEjemplos/Valve.bmp");
-	read.ReadBMP("MisEjemplos/Valve.bmp");
+	a.ReadBMP("MisEjemplos/DSCF2952.bmp");
+	read.ReadBMP("MisEjemplos/DSCF2952.bmp");
 
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
