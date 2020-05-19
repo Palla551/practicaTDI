@@ -24,11 +24,9 @@ struct Point
 };
 
 void Sobel() {
+	C_Trace("Calculando Sobel");
 	IndexT row, col;
 	a_sobel = a;
-
-	int mx[3][3] = { {-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
-	int my[3][3] = { {-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 	
 	double gx = 0;
 	double gy = 0;
@@ -40,23 +38,9 @@ void Sobel() {
 			gy = (a(row + 1, col - 1) + (2 * a(row + 1, col)) + (a(row + 1, col + 1))) + (-a(row - 1, col -1) + (-2 * a(row - 1, col)) + (-a(row - 1, col + 1)));
 			g = sqrt(pow(gx,2) + pow (gy, 2));
 			a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
-			//a_sobel(row, col) = g;
 		}
 
-	//for (row = a.FirstRow() + 1; row <= a.LastRow() - 1; row++)
-	//	for (col = a.FirstCol() + 1; col <= a.LastCol() - 1; col++) {
-	//		for(int x = -1; x < 2; x++)
-	//			for (int y = -1; y < 2; y++) {
-	//				gx += mx[x + 1][y + 1] * a(row + x, col + y);
-	//				gy += my[x + 1][y + 1] * a(row + x, col + y);
-	//			}
-	//		g = sqrt(pow(gx, 2) + pow(gx, 2));
-	//		a_sobel(row, col) = (g < 0) ? 0 : ((g > 255)? 255 : g);
-	//		gx = 0;
-	//		gy = 0;
-	//	}
-
-	//a.Free();
+	a.Free();
 
 }
 
@@ -145,27 +129,32 @@ int FloodFill(IndexT x, IndexT y, long vecinos, long color_seeds, long previus_c
 }
 
 void Seeds(long umbral, long vecinos, long size_seed, long color_seeds, long previus_color) {
+	C_Trace("Extrayendo semillas");
 	IndexT row, col;
 	auto a_seeds = color_seeds;
+	int aux = 0;
 
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
 			if (a_sobel(row, col) < umbral) img(row, col) = previus_color;
 		}
 
-	int asdf = 0;
+	C_Trace("Imprimiendo candidatos a semillas");
 	img.WriteBMP("MisEjemplos/SEEDS_BN.bmp");
 
+	C_Trace("Pintando semillas");
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++) {
 			if (img(row, col) == previus_color) {
-				asdf = FloodFill(row, col, vecinos, a_seeds, previus_color);
-				if (asdf > size_seed) a_seeds++;
+				aux = FloodFill(row, col, vecinos, a_seeds, previus_color);
+				if (aux > size_seed) a_seeds++;
 				else FloodFill(row, col, vecinos, 0, a_seeds);
 
 				if (a_seeds >= 255) a_seeds = color_seeds;
 			}
 		}
+
+	C_Trace("Imprimiendo semillas coloreadas");
 	img.WriteBMP("MisEjemplos/SEEDS_CL.bmp");
 	C_Image prueba;
 	prueba.ReadBMP("MisEjemplos/SEEDS_CL.bmp");
@@ -176,12 +165,12 @@ void Seeds(long umbral, long vecinos, long size_seed, long color_seeds, long pre
 
 void WaterShed(long umbral, long vecinos = 0, long size_seed = 0,long color_seeds = 10, long previus_color = 255) {
 	IndexT row, col;
-
 	//Primera parte, generacion de semillas
 	Sobel();
 	Seeds(umbral, vecinos, size_seed, color_seeds, previus_color);
 
 	//Segunda parte, inundacion
+	C_Trace("Iniciando Watershed");
 	auto limite = umbral;
 
 	while (limite < 256) {
@@ -195,9 +184,13 @@ void WaterShed(long umbral, long vecinos = 0, long size_seed = 0,long color_seed
 			}
 		limite++;
 	}
+	C_Trace("Fin de Watershed");
 }
 
 void Resta() {
+	C_Trace("Calculando Bokeh");
+	C_Image copia(read);
+	C_Matrix blur(-2, 2, -2, 2);
 	IndexT row, col;
 	int historigram[256];
 	auto max = 0;
@@ -216,31 +209,52 @@ void Resta() {
 			max = historigram[x];
 		}
 
+	C_Matrix matriz1(1, 10, 1, 10);
+	C_Matrix matriz3;
+
+	blur.Gaussian((float)30);
+	blur.DivideEscalar(blur.Sum());
+	copia.Convolution(read, blur);
+
 	for (row = img.FirstRow(); row <= img.LastRow(); row++)
 		for (col = img.FirstCol(); col <= img.LastCol(); col++)
-			if (img(row, col) == aux) read(row, col) = a(row,col);
+			if (img(row, col) == aux) read(row, col) = copia(row, col);
 
+	copia.WriteBMP("MisEjemplos/BLUR.bmp");
+	copia.Free();
+	blur.Free();
+	C_Trace("Fin de Bokeh");
 }
 
 
 int main(int argc, char **argv)
 {
-	a.ReadBMP("MisEjemplos/DSCF2952.bmp");
-	read.ReadBMP("MisEjemplos/DSCF2952.bmp");
+	//Leemos la entrada por consola
+	string carpeta;
+	int gradiente = 25, tamsed = 250;
+	cout << "Seleccione archivo, continuado de .bmp\n";
+	cin >> carpeta;
+	cout << "Selecciones Umbral de Gradiente\n";
+	cin >> gradiente;
+	cout << "Selecciones espacio de poza minimo\n";
+	cin >> tamsed;
+
+	const char* carpeta_in = carpeta.data();
+	
+	//Seteamos las imagenes a procesar
+	a.ReadBMP(carpeta_in);
+	read.ReadBMP(carpeta_in);
 
 	img.Resize(a.FirstRow(),a.LastRow(),a.FirstCol(),a.LastCol(),0);
 
 	a.Grey();
+	read.Grey();
 
 	//Aplicacion de filtros
 	a.MedianFilter(a, 3);
-	//C_Matrix matriz2(-1, 1, -1, 1);
-	//matriz2.Gaussian((float)0.4);
-	//matriz2.DivideEscalar(matriz2.Sum());
-	//a.Convolution(read, matriz2);
 
 	//Aplicacion de algoritmo WaterShed
-	WaterShed(25, 0, 100);
+	WaterShed(gradiente, 0, tamsed);
 
 	//Aplicacion de emborronado
 	Resta();
