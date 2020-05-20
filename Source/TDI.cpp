@@ -163,6 +163,64 @@ void Seeds(long umbral, long vecinos, long size_seed, long color_seeds, long pre
 	prueba.Free();
 }
 
+void WFloodFill(IndexT x, IndexT y, long color_seeds, long previus_color, long profundida)
+{
+	vector<Point> queue;
+	auto saliente = 0;
+	auto cont = 0;
+	auto p = Point();
+	auto check = Point();
+	p.x = x;
+	p.y = y;
+
+	queue.push_back(p);
+	img(x, y) = color_seeds;
+
+	while (!queue.empty())
+	{
+		Point filled = queue.back();
+		queue.pop_back();
+		cont++;
+
+		// Left
+		check.x = filled.x - 1;
+		check.y = filled.y;
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color) && a_sobel(check.x, check.y) <= profundida)
+		{
+			img(check.x, check.y) = color_seeds;
+			queue.push_back(check);
+		}
+
+		// Right
+		check.x = filled.x + 1;
+		check.y = filled.y;
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color) && a_sobel(check.x, check.y) <= profundida)
+		{
+			img(check.x, check.y) = color_seeds;
+			queue.push_back(check);
+		}
+
+		// Top
+		check.x = filled.x;
+		check.y = filled.y + 1;
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color) && a_sobel(check.x, check.y) <= profundida)
+		{
+			img(check.x, check.y) = color_seeds;
+			queue.push_back(check);
+		}
+
+		// Bot
+		check.x = filled.x;
+		check.y = filled.y - 1;
+		if (img.In(check.x, check.y) && (img(check.x, check.y) == previus_color) && a_sobel(check.x, check.y) <= profundida)
+		{
+			img(check.x, check.y) = color_seeds;
+			queue.push_back(check);
+		}
+	}
+
+}
+
 void WaterShed(long umbral, long vecinos = 0, long size_seed = 0,long color_seeds = 10, long previus_color = 255) {
 	IndexT row, col;
 	//Primera parte, generacion de semillas
@@ -180,7 +238,7 @@ void WaterShed(long umbral, long vecinos = 0, long size_seed = 0,long color_seed
 					for (int i = -1; i <= 1; i++)
 						for (int j = -1; j <= 1; j++)
 							if (img(row + i, col + j) == 0 && a_sobel(row, col) <= limite)
-								img(row + i, col + j) = img(row,col);
+								WFloodFill(row, col, img(row, col), 0, limite);
 			}
 		limite++;
 	}

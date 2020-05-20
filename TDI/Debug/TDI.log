@@ -1,2 +1,3 @@
 ﻿  TDI.cpp
+C:\Users\juanj\source\repos\practicaTDI\Source\TDI.cpp(241,33): warning C4244: 'argumento': conversión de 'C_Matrix::ElementT' a 'long'; posible pérdida de datos
   TDI.vcxproj -> C:\Users\juanj\source\repos\practicaTDI\Debug\TDI.exe
